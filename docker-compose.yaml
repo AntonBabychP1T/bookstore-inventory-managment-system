@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+  postgresqldb:
+    image: postgres
+    restart: unless-stopped
+    env_file: ./.env
+    ports:
+      - ${POSTGRESQL_LOCAL_PORT}:${POSTGRESQL_DOCKER_PORT}
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRESQL_ROOT_PASSWORD}
+      POSTGRES_DB: ${POSTGRESQL_DATABASE}
+      POSTGRES_USER: ${POSTGRESQL_USER}
+
+  app:
+    depends_on:
+      - postgresqldb
+    restart: on-failure
+    image: bookstore-ims
+    build: .
+    env_file: ./.env
+    ports:
+      - ${SPRING_LOCAL_PORT}:${SPRING_DOCKER_PORT}
+      - ${DEBUG_PORT}:${DEBUG_PORT}
+    environment:
+      SPRING_APPLICATION_JSON: '{
+        "spring.datasource.url": "jdbc:postgresql://postgresqldb:${POSTGRESQL_DOCKER_PORT}/${POSTGRESQL_DATABASE}",
+        "spring.datasource.username": "${POSTGRESQL_USER}",
+        "spring.datasource.password": "${POSTGRESQL_PASSWORD}",
+        "spring.datasource.driver-class-name": "org.postgresql.Driver",
+        "spring.jpa.hibernate.ddl-aut": "validate",
+        "spring.jpa.show-sql": "true",
+        "server.servlet.context-path": "/api",
+        "jwt.expiration": "${JWT_EXPIRATION_TIME}",
+        "jwt.secret": "${JWT_SECRET}"
+        }'
+      JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
