@@ -8,9 +8,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.SoftDelete;
 
 @Getter
 @Setter
+@SoftDelete
 @Entity
 @Table(name = "books")
 public class Book {

@@ -1,10 +1,13 @@
 package unillence.bookstoreims.service;
 
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import unillence.bookstoreims.bookstore.*;
+import unillence.bookstoreims.mapper.BookMapper;
 import unillence.bookstoreims.model.Book;
 import unillence.bookstoreims.repository.BookRepository;
 
@@ -12,38 +15,51 @@ import unillence.bookstoreims.repository.BookRepository;
 @Service
 public class BookServiceImpl extends BookServiceGrpc.BookServiceImplBase {
     private final BookRepository bookRepository;
+    private final BookMapper bookMapper;
 
     @Override
-    public void updateBook(UpdateBookRequest request, StreamObserver<UpdateBookResponse> responseObserver) {
-        super.updateBook(request, responseObserver);
+    public void updateBook(UpdateBookRequest request, StreamObserver<OperationBookResponse> responseObserver) {
+        Book book = bookMapper.updateBook(request);
+
+        responseObserver.onNext(bookMapper.toAddResponse(bookRepository.save(book)));
+        responseObserver.onCompleted();
     }
 
     @Override
     public void deleteBook(DeleteBookRequest request, StreamObserver<DeleteBookResponse> responseObserver) {
-        super.deleteBook(request, responseObserver);
+        try {
+            Book book = getBookById(Long.valueOf(request.getId()));
+            bookRepository.delete(book);
+            DeleteBookResponse response = DeleteBookResponse.newBuilder()
+                    .setSuccess(true)
+                    .setMessage("Book with id: " + request.getId() + " deleted")
+                    .build();
+
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        } catch (EntityNotFoundException e) {
+            responseObserver.onError(Status.NOT_FOUND
+                    .withDescription(e.getMessage())
+                    .asRuntimeException());
+        }
     }
 
     @Override
     public void listBooks(ListBooksRequest request, StreamObserver<ListBooksResponse> responseObserver) {
-        super.listBooks(request, responseObserver);
+        Page<Book> booksPage = bookRepository.findAll(bookMapper.mapListBooksRequestToListBooksPageable(request));
+        ListBooksResponse response = buildListBooksResponse(booksPage);
+
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
     }
 
     @Override
     public void addBook(
             unillence.bookstoreims.bookstore.AddBookRequest request,
-            StreamObserver<unillence.bookstoreims.bookstore.AddBookResponse> responseObserver
+            StreamObserver<unillence.bookstoreims.bookstore.OperationBookResponse> responseObserver
     ) {
-        Book book = new Book();
-        book.setTitle(request.getTitle());
-        book.setAuthor(request.getAuthor());
-        book.setIsbn(request.getIsbn());
-        book.setQuantity(request.getQuantity());
-
-        bookRepository.save(book);
-        AddBookResponse response = AddBookResponse.newBuilder()
-                .setSuccess(true)
-                .setMessage("Book added successfully")
-                .build();
+        OperationBookResponse response =
+                bookMapper.toAddResponse(bookRepository.save(bookMapper.toModel(request)));
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
@@ -51,18 +67,27 @@ public class BookServiceImpl extends BookServiceGrpc.BookServiceImplBase {
     @Override
     public void getBook(unillence.bookstoreims.bookstore.GetBookRequest request,
                         StreamObserver<unillence.bookstoreims.bookstore.Book> responseObserver) {
-        Book book = getBookById(Long.valueOf(request.getId()));
-        unillence.bookstoreims.bookstore.Book response = unillence.bookstoreims.bookstore.Book.newBuilder()
-                .setId(String.valueOf(book.getId()))
-                .setTitle(book.getTitle())
-                .setAuthor(book.getAuthor())
-                .setIsbn(book.getIsbn())
-                .setQuantity(book.getQuantity())
-                .build();
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
+        try {
+            Book book = getBookById(Long.valueOf(request.getId()));
+            unillence.bookstoreims.bookstore.Book response = bookMapper.fromModelToMessage(book);
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        } catch (EntityNotFoundException e) {
+            responseObserver.onError(Status.NOT_FOUND
+                    .withDescription(e.getMessage())
+                    .asRuntimeException());
+        }
+    }
 
-        super.getBook(request, responseObserver);
+    private ListBooksResponse buildListBooksResponse(Page<Book> booksPage) {
+        ListBooksResponse.Builder responseBuilder = ListBooksResponse.newBuilder();
+        for (Book book : booksPage) {
+            responseBuilder.addBooks(bookMapper.fromModelToMessage(book));
+        }
+        return responseBuilder
+                .setTotalPages(booksPage.getTotalPages())
+                .setTotalElements((int) booksPage.getTotalElements())
+                .build();
     }
 
     private Book getBookById(Long id) {
