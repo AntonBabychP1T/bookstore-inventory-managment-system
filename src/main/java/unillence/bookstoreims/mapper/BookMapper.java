@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import unillence.bookstoreims.bookstore.AddBookRequest;
+import unillence.bookstoreims.bookstore.BookMessage;
 import unillence.bookstoreims.bookstore.OperationBookResponse;
 import unillence.bookstoreims.bookstore.UpdateBookRequest;
 import unillence.bookstoreims.config.MapperConfig;
@@ -14,7 +15,7 @@ import unillence.bookstoreims.model.Book;
 public interface BookMapper {
     Book toModel(AddBookRequest request);
 
-    unillence.bookstoreims.bookstore.Book fromModelToMessage(Book book);
+    BookMessage fromModelToMessage(Book book);
 
     default OperationBookResponse toAddResponse(Book book) {
         return OperationBookResponse.newBuilder()
