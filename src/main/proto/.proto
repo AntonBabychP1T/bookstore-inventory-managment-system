@@ -18,13 +18,13 @@ message Book {
 // Service Definition
 service BookService {
   // Create a new book
-  rpc AddBook (AddBookRequest) returns (AddBookResponse);
+  rpc AddBook (AddBookRequest) returns (OperationBookResponse);
 
   // Retrieve a book by ID
   rpc GetBook (GetBookRequest) returns (Book);
 
   // Update an existing book
-  rpc UpdateBook (UpdateBookRequest) returns (UpdateBookResponse);
+  rpc UpdateBook (UpdateBookRequest) returns (OperationBookResponse);
 
   // Delete a book by ID
   rpc DeleteBook (DeleteBookRequest) returns (DeleteBookResponse);
@@ -51,9 +51,10 @@ message AddBookRequest {
 }
 
 // AddBookResponse
-message AddBookResponse {
+message OperationBookResponse {
   bool success = 1;
   string message = 2;
+  Book book = 3;
 }
 
 // UpdateBookRequest
@@ -65,12 +66,6 @@ message UpdateBookRequest {
   int32 quantity = 5;
   string description = 6;
   string coverImage = 7;
-}
-
-// UpdateBookResponse
-message UpdateBookResponse {
-  bool success = 1;
-  string message = 2;
 }
 
 // DeleteBookRequest
