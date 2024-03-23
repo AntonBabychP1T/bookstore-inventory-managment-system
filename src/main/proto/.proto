@@ -1,0 +1,100 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "unillence.bookstoreims.bookstore";
+option java_outer_classname = "BookProto";
+
+package unillence.bookstoreims;
+
+// Book Message
+message Book {
+  string id = 1;
+  string title = 2;
+  string author = 3;
+  string isbn = 4;
+  int32 quantity = 5;
+}
+
+// Service Definition
+service BookService {
+  // Create a new book
+  rpc AddBook (AddBookRequest) returns (AddBookResponse);
+
+  // Retrieve a book by ID
+  rpc GetBook (GetBookRequest) returns (Book);
+
+  // Update an existing book
+  rpc UpdateBook (UpdateBookRequest) returns (UpdateBookResponse);
+
+  // Delete a book by ID
+  rpc DeleteBook (DeleteBookRequest) returns (DeleteBookResponse);
+
+  // List all books
+  rpc ListBooks (ListBooksRequest) returns (ListBooksResponse);
+}
+
+// Request and Response Messages
+
+// GetBookRequest
+message GetBookRequest {
+  string id = 1;
+}
+
+// AddBookRequest
+message AddBookRequest {
+  string title = 1;
+  string author = 2;
+  string isbn = 3;
+  int32 quantity = 4;
+  string description = 5;
+  string coverImage = 6;
+}
+
+// AddBookResponse
+message AddBookResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// UpdateBookRequest
+message UpdateBookRequest {
+  string id = 1;
+  string title = 2;
+  string author = 3;
+  string isbn = 4;
+  int32 quantity = 5;
+  string description = 6;
+  string coverImage = 7;
+}
+
+// UpdateBookResponse
+message UpdateBookResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// DeleteBookRequest
+message DeleteBookRequest {
+  string id = 1;
+}
+
+// DeleteBookResponse
+message DeleteBookResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// ListBooksRequest - can include filtering or pagination parameters
+message ListBooksRequest {
+  int32 page = 1;
+  int32 size = 2;
+  string sortField = 3;
+  string sortOrder = 4;
+  string filter = 5;
+}
+
+message ListBooksResponse {
+  repeated Book books = 1;
+  int32 totalPages = 2;
+  int32 totalElements = 3;
+}

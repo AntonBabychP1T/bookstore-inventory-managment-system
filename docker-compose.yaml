@@ -22,6 +22,7 @@ services:
     ports:
       - ${SPRING_LOCAL_PORT}:${SPRING_DOCKER_PORT}
       - ${DEBUG_PORT}:${DEBUG_PORT}
+      - ${GRPC_SERVER_PORT}:${GRPC_SERVER_PORT}
     environment:
       SPRING_APPLICATION_JSON: '{
         "spring.datasource.url": "jdbc:postgresql://postgresqldb:${POSTGRESQL_DOCKER_PORT}/${POSTGRESQL_DATABASE}",
@@ -32,6 +33,7 @@ services:
         "spring.jpa.show-sql": "true",
         "server.servlet.context-path": "/api",
         "jwt.expiration": "${JWT_EXPIRATION_TIME}",
-        "jwt.secret": "${JWT_SECRET}"
+        "jwt.secret": "${JWT_SECRET}",
+        "grpc.server.port":"${GRPC_SERVER_PORT}"
         }'
       JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
