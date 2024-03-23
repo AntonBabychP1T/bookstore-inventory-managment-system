@@ -26,7 +26,7 @@ import unillence.bookstoreims.model.Book;
 import unillence.bookstoreims.repository.BookRepository;
 
 @ExtendWith(MockitoExtension.class)
-public class BookServiceImplTest {
+public class BookServiceImplUnitTest {
     private static final String VALID_ID = "1";
     private static final String NOT_VALID_ID = "-1";
     private static final String TITLE = "Valid title";
