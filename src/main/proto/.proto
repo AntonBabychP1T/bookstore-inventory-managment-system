@@ -7,7 +7,7 @@ option java_outer_classname = "BookProto";
 package unillence.bookstoreims;
 
 // Book Message
-message Book {
+message BookMessage {
   string id = 1;
   string title = 2;
   string author = 3;
@@ -21,7 +21,7 @@ service BookService {
   rpc AddBook (AddBookRequest) returns (OperationBookResponse);
 
   // Retrieve a book by ID
-  rpc GetBook (GetBookRequest) returns (Book);
+  rpc GetBook (GetBookRequest) returns (BookMessage);
 
   // Update an existing book
   rpc UpdateBook (UpdateBookRequest) returns (OperationBookResponse);
@@ -54,7 +54,7 @@ message AddBookRequest {
 message OperationBookResponse {
   bool success = 1;
   string message = 2;
-  Book book = 3;
+  BookMessage book = 3;
 }
 
 // UpdateBookRequest
@@ -89,7 +89,7 @@ message ListBooksRequest {
 }
 
 message ListBooksResponse {
-  repeated Book books = 1;
+  repeated BookMessage books = 1;
   int32 totalPages = 2;
   int32 totalElements = 3;
 }
