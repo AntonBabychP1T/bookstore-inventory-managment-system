@@ -29,6 +29,4 @@ public class Book {
     private Integer quantity;
     private String description;
     private String coverImage;
-    @Column(nullable = false)
-    private boolean isDeleted = false;
 }

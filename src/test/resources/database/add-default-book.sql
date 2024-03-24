@@ -1,0 +1,1 @@
+INSERT INTO books (id, title, quantity, author, isbn, description, cover_image, deleted) VALUES (1, 'Valid Title', 2, 'Valid Author', '12345678', 'description', 'https://example.com/cover.jpg', false);
