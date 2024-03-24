@@ -175,7 +175,6 @@ public class BookServiceImplUnitTest {
         book.setQuantity(QUANTITY);
         book.setDescription(DESCRIPTION);
         book.setCoverImage(COVER_IMAGE);
-        book.setDeleted(false);
         return book;
     }
 

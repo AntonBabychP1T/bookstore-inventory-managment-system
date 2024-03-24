@@ -51,12 +51,14 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
-	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
-	testImplementation 'com.consol.citrus:citrus-java-dsl:3.4.0'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
+	implementation 'com.consol.citrus:citrus-java-dsl:3.4.0'
 	testImplementation 'com.consol.citrus:citrus-core:3.4.0'
 	testImplementation 'com.consol.citrus:citrus-http:3.4.0'
 	testImplementation 'com.consol.citrus:citrus-spring:3.4.0'
-
+	implementation 'com.consol.citrus:citrus-junit5:3.4.0'
+	testImplementation "io.grpc:grpc-testing:${grpcVersion}"
 
 }
 
