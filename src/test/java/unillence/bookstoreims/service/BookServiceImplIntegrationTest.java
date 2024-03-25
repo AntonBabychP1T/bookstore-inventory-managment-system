@@ -85,7 +85,7 @@ public class BookServiceImplIntegrationTest {
     @Test
     @CitrusTest
     @DisplayName("Verify updateBook() method works")
-    public void testUpdateBook(@CitrusResource TestRunner runner) {
+    public void updateBook_ValidUpdateRequest_UpdatedResponseAndRecordInDb(@CitrusResource TestRunner runner) {
         runner.sql(action -> action.dataSource(dataSource)
                 .sqlResource("classpath:database/add-default-book.sql"));
 
@@ -107,7 +107,7 @@ public class BookServiceImplIntegrationTest {
     @CitrusTest
     @Test
     @DisplayName("Verify listBooks() returns correct data and data in DB is as expected")
-    public void testListBooks(@CitrusResource TestRunner runner) {
+    public void listBook_ValidPageRequest_ListBookFromDb(@CitrusResource TestRunner runner) {
         runner.sql(action -> action.dataSource(dataSource)
                 .sqlResource("classpath:database/add-three-books.sql"));
 

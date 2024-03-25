@@ -29,6 +29,7 @@ import unillence.bookstoreims.repository.BookRepository;
 public class BookServiceImplUnitTest {
     private static final String VALID_ID = "1";
     private static final String NOT_VALID_ID = "-1";
+    private static final Long NOT_VALID_LONG_ID = -1L;
     private static final String TITLE = "Valid title";
     private static final String AUTHOR = "Valid author";
     private static final String ISBN = "1234567890";
@@ -88,11 +89,11 @@ public class BookServiceImplUnitTest {
     @DisplayName("getBook() should handle EntityNotFoundException")
     public void getBook_WithInvalidRequest_ShouldHandleEntityNotFoundException() {
         GetBookRequest request = GetBookRequest.newBuilder().setId(NOT_VALID_ID).build();
-        when(bookRepository.findById(anyLong())).thenReturn(Optional.empty());
+        when(bookRepository.findById(NOT_VALID_LONG_ID)).thenReturn(Optional.empty());
 
         bookService.getBook(request, responseObserverGetBook);
 
-        verify(bookRepository).findById(anyLong());
+        verify(bookRepository).findById(NOT_VALID_LONG_ID);
         verify(responseObserverGetBook).onError(any(StatusRuntimeException.class));
     }
 
@@ -101,9 +102,9 @@ public class BookServiceImplUnitTest {
     public void updateBook_WithValidRequest_ShouldUpdateAndReturnBook() {
         UpdateBookRequest request = createValidUpdateBookRequest();
         Book existingBook = createBookWithAllFields();
-        when(bookMapper.updateBook(any())).thenReturn(existingBook);
-        when(bookRepository.save(any(Book.class))).thenReturn(existingBook);
-        when(bookMapper.toAddResponse(any()))
+        when(bookMapper.updateBook(request)).thenReturn(existingBook);
+        when(bookRepository.save(existingBook)).thenReturn(existingBook);
+        when(bookMapper.toAddResponse(existingBook))
                 .thenReturn(OperationBookResponse.newBuilder().setSuccess(true).build());
 
         bookService.updateBook(request, responseObserver);
