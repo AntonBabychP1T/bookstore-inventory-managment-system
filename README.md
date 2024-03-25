@@ -76,12 +76,73 @@ The gRPC server will be accessible on port 9090.
 
 2. Import the provided [.proto](https://github.com/AntonBabychP1T/bookstore-inventory-managment-system/blob/master/src/main/proto/.proto) file and use existing form to testing application).
 
+## gRPC API Usage Examples
+
+Below are examples of how to use the gRPC API to interact with the Bookstore Inventory Management System. These examples are presented in JSON format, as they would appear when using a gRPC client like Postman.
+
+### Add a New Book
+
+To add a new book to the inventory:
+
+```json
+{
+  "title": "The Great Gatsby",
+  "author": "F. Scott Fitzgerald",
+  "isbn": "1234567890",
+  "quantity": 10,
+  "description": "A classic novel...",
+  "coverImage": "http://example.com/image.jpg"
+}
+```
+### Retrieve a Book by ID
+
+To retrieve a book by its ID:
+```json
+{
+  "id": "1"
+}
+```
+### Update an Existing Book
+
+To update an existing book in the inventory:
+```json
+{
+  "id": "1",
+  "title": "The Great Gatsby Updated",
+  "author": "F. Scott Fitzgerald",
+  "isbn": "1234567890",
+  "quantity": 12,
+  "description": "An updated classic novel...",
+  "coverImage": "http://example.com/newimage.jpg"
+}
+```
+### Delete a Book by ID
+
+To delete a book from the inventory using its ID:
+```json
+{
+  "id": "1"
+}
+
+```
+
+### List All Books
+
+To list all books in the inventory:
+```json
+{
+  "page": 1,
+  "size": 10
+}
+
+```
+
 ## Video guide 
 Here you can see video presentation for this project [link](https://www.loom.com/share/51fc6e3c0aba4565aa7654a827b3e4b6)
 
 ## Contact
 
-Your Name - [antonbabi13@gmail.com](mailto:antonbabi13@gmail.com)
+My email - [antonbabi13@gmail.com](mailto:antonbabi13@gmail.com)
 
 Project Link: [https://github.com/AntonBabychP1T/bookstore-inventory-managment-system](https://github.com/AntonBabychP1T/bookstore-inventory-managment-system)
 
