@@ -3,6 +3,8 @@ package unillence.bookstoreims.service;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -26,7 +28,7 @@ public class BookServiceImpl extends BookServiceGrpc.BookServiceImplBase {
 
     @Override
     public void updateBook(UpdateBookRequest request, StreamObserver<OperationBookResponse> responseObserver) {
-        checkQuantity(request.getQuantity());
+        validateQuantity(request.getQuantity());
         Book book = bookMapper.updateBook(request);
 
         responseObserver.onNext(bookMapper.toAddResponse(bookRepository.save(book)));
@@ -66,7 +68,7 @@ public class BookServiceImpl extends BookServiceGrpc.BookServiceImplBase {
             unillence.bookstoreims.bookstore.AddBookRequest request,
             StreamObserver<unillence.bookstoreims.bookstore.OperationBookResponse> responseObserver
     ) {
-        checkQuantity(request.getQuantity());
+        validateQuantity(request.getQuantity());
         OperationBookResponse response =
                 bookMapper.toAddResponse(bookRepository.save(bookMapper.toModel(request)));
         responseObserver.onNext(response);
@@ -89,22 +91,23 @@ public class BookServiceImpl extends BookServiceGrpc.BookServiceImplBase {
     }
 
     private ListBooksResponse buildListBooksResponse(Page<Book> booksPage) {
-        ListBooksResponse.Builder responseBuilder = ListBooksResponse.newBuilder();
-        for (Book book : booksPage) {
-            responseBuilder.addBooks(bookMapper.fromModelToMessage(book));
-        }
-        return responseBuilder
+        List<BookMessage> bookMessages = booksPage.stream()
+                .map(bookMapper::fromModelToMessage)
+                .collect(Collectors.toList());
+
+        return ListBooksResponse.newBuilder()
+                .addAllBooks(bookMessages)
                 .setTotalPages(booksPage.getTotalPages())
                 .setTotalElements((int) booksPage.getTotalElements())
                 .build();
-    }
+        }
 
     private Book getBookById(Long id) {
         return bookRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Can't find book with id=" + id));
     }
 
-    private void checkQuantity(int quantity) {
+    private void validateQuantity(int quantity) {
         if (quantity < 0) {
             throw new IllegalArgumentException("Quantity cannot be less than 0");
         }
